@@ -13,3 +13,6 @@ application.macosx
 
 # Sub-folders
 */
+
+# Images
+*.tif

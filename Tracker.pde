@@ -7,102 +7,168 @@ class Tracker{
 
   //Coordinates
   float[] coordinates;
-  //The camera to capture from 
-  Capture cam; 
-  //The color to be tracked
-  color targetColor;
+  //Camera to capture from 
+  Capture cam;
+  //Colors to be tracked
+  float[][] targetColors;
   //Sensitivity: lower will select fewer pixels
   int trackingSensitivity;
-  //Number of pixels being tracked
-  int n;
+  //Number of pixels matched
+  int numPixels;
+  //Number of colors being tracked
+  int numColors;
   //Number of times the coordinates have been requested
   int t;
   //Camera number
   int camNumber;
-  //Color to compare to as r, g and b
-  float r2;
-  float g2;
-  float b2;
+  //Configuring or not?
+  boolean confMode;
 
   /* 
    * Constructor for the Tracker object ...
    * Sets up the tracker
    */
-  Tracker(Goldfish_Tracker that, int camNumber1, color targetColor1, int trackingSensitivity1){
+  Tracker(Goldfish_Tracker that, int camNumber1, int trackingSensitivity1){
     coordinates = new float[2];
     cam = new Capture(that, cameras[camNumber]);
-    targetColor = targetColor1;
+    targetColors = new float[8][];
+    for(int i = 0; i < targetColors.length; i++){
+      targetColors[i] = new float[3];
+      for(int j = 0; j < 3; j++){
+        targetColors[i][j] = -1.0;
+      }
+    }
     trackingSensitivity = trackingSensitivity1;
-    n = 0;
+    numPixels = 0;
+    numColors = 0;
     t = 0;
     camNumber = camNumber1;
-    r2 = red(targetColor);
-    g2 = green(targetColor);
-    b2 = blue(targetColor);
+    confMode = true;
 
     cam.start();
   }
+
+  /*
+   * Scan the image for a color one time given its index in the array of target colors
+   */
+  void scanPixels(int c){
+    //For each pixel in the image, compare it to the target color
+    for(int x = 0; x < cam.width; x ++){
+      for(int y = 0; y < cam.height; y ++){
+
+        //Get color of the current pixel as r, g and b
+        int loc = x + y*cam.width;
+        color currentColor = cam.pixels[loc];
+        float r1 = red(currentColor);
+        float g1 = green(currentColor);
+        float b1 = blue(currentColor);
+        
+        //Euclidean distance
+        float d = dist(r1, g1, b1, targetColors[c][0], targetColors[c][1], targetColors[c][2]);
+
+        //Check if it is close enough to the target color
+        if(d < trackingSensitivity){
+          //Allows visual feedback on selection of colors to track
+          if(confMode){
+            set((int) (x * (coordinates[0] / numPixels)),(int) (y * (coordinates[1] / numPixels)), white);
+          }
+          //Add to the total x and y values
+          coordinates[0] += x;
+          coordinates[1] += y;
+          numPixels += 1;
+        }
+      }
+    }
+  }
+
 
   /* 
    * Update the coordinates of the tracked color ...
    * Matches pixel colors and averages matched locations to decide where the object is
    */
-  void update(){
+  void updateRender(){
     if(cam.available()){
-
       cam.read();
-      //Set up average location of the tracked color
+      if(confMode){
+        image(cam, 0, 0, width, height);
+      }
+
+      //Set up average location of the tracked colors as [x, y] or [y, z]
       coordinates[0] = 0;
       coordinates[1] = 0;
-      //How many pixels matched
-      n = 0;
+      numPixels = 0;
 
-      //For each pixel in the image, compare it to the target color
-      for(int x = 0; x < cam.width; x ++){
-        for(int y = 0; y < cam.height; y ++){
-          //Get color of the current pixel as r, g and b
-          int loc = x + y*cam.width;
-          color currentColor = cam.pixels[loc];
-          float r1 = red(currentColor);
-          float g1 = green(currentColor);
-          float b1 = blue(currentColor);
-          //Euclidian distance
-          float d = dist(r1,g1,b1,r2,g2,b2);
-
-          //Check if it is close enough to the target color
-          if(d < trackingSensitivity)
-          {
-            //Add to the total x and y values
-            coordinates[0] += x;
-            coordinates[1] += y;
-            n += 1;
-          }
-
-        }
+      for(int c = 0; c < targetColors.length && targetColors[c][1] != -1.0; c ++){
+        //Calculate averages
+        scanPixels(c);
       }
 
       //Calculate average x and y locations
-      if(n != 0){
-        coordinates[0] /= n;
-        coordinates[1] /= n;
+      if(numPixels != 0){
+        coordinates[0] /= numPixels;
+        coordinates[1] /= numPixels;
       }
 
+      //Allows visual feedback on selection of colors to track
+      if(confMode){
+        rect(coordinates[0] - 15, coordinates[1] - 15, 30, 30);
+      }
+    }
+
+    //If the camera's unavailable
+    else if(t % 30 == 0){
+      println("Camera " + camNumber + " is unavailable");
     }
   }
 
   /*
    * Get the coordinates ...
-   * Return the coordinates as a x:1 so it is scalable to any size rendering
+   * Return the coordinates as a x:1 ratio so it is scalable to any size rendering
    */
-  float[] get_coordinates(){
+  float[] getCoordinates(){
     float[] result = new float[2];
     result[0] = coordinates[0] / cam.width;
     result[1] = coordinates[1] / cam.height;
     if(t % 30 == 0){
-      println(result[0], result[1], n);
+      println(result[0], result[1], numPixels);
     }
     t++;
     return result;
+  }
+
+  /* 
+   * Add a new color to track ...
+   * Determines the location of the mouse, the color at that location, and then store the color
+   */
+  void addColor(){
+    //Calculate the x:1 ratio of the x and y locations clicked
+    float xRatio = (float) mouseX / width;
+    float yRatio = (float) mouseY / height;
+
+    //Calculate the location in the image that is at the ratio calculated
+    int loc = (int) ((xRatio * cam.width) + (yRatio*cam.height)*cam.width);
+
+    //Get the color at that location
+    color c = cam.pixels[loc];
+
+    //Separate the color into r, g, and b
+    float r = red(c);
+    float g = green(c);
+    float b = blue(c);
+
+    //Get the color that was clicked, add it to the array of colors to track
+    if(numColors < targetColors.length - 1){
+      targetColors[numColors][0] = r;
+      targetColors[numColors][1] = g;
+      targetColors[numColors][2] = b;
+      numColors ++;
+      if(numColors >= targetColors.length){
+        println("Now tracking the maximum number of colors");
+      }
+    }
+    else{
+      println("Already tracking the maximum number of colors");
+    }
   }
 
 }
