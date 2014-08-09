@@ -70,7 +70,7 @@ class Tracker{
         if(d < trackingSensitivity){
           //Allows visual feedback on selection of colors to track
           if(confMode){
-            set((int) (x * (coordinates[0] / numPixels)),(int) (y * (coordinates[1] / numPixels)), white);
+            set((int) ((x / cam.width) * width),(int) ((y / cam.height) * height), black);
           }
           //Add to the total x and y values
           coordinates[0] += x;
@@ -111,7 +111,7 @@ class Tracker{
 
       //Allows visual feedback on selection of colors to track
       if(confMode){
-        rect(coordinates[0] - 15, coordinates[1] - 15, 30, 30);
+        rect((((coordinates[0] / cam.width) * width) - 15), (((coordinates[1] / cam.height) * height)  - 15), 30, 30);
       }
     }
 
