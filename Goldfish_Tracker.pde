@@ -49,7 +49,7 @@ void initialize(){
   cameras = Capture.list();
 
   //Color tracker for (x, y)
-  xy = new Tracker(this, 0, 25);
+  xy = new Tracker(this, 0, 10);
   
   //3D means another color to track, another Tracker object, and rotation
   if(threeD){
@@ -58,7 +58,7 @@ void initialize(){
     notCarl = new Fish(width / 2, height / 2, 0);
 
     //Color tracker for (y, z)
-    yz = new Tracker(this, 15, 25);
+    yz = new Tracker(this, 0, 25);
   }
   //2D means different constructors for the Fish and Tank objects, and no need for two Tracker objects or rotation
   else{

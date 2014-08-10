@@ -70,7 +70,7 @@ class Tracker{
         if(d < trackingSensitivity){
           //Allows visual feedback on selection of colors to track
           if(confMode){
-            set((int) ((x / cam.width) * width),(int) ((y / cam.height) * height), black);
+            set((int) ((x / (float) cam.width) * width),(int) ((y / (float) cam.height) * height), white);
           }
           //Add to the total x and y values
           coordinates[0] += x;
@@ -117,7 +117,7 @@ class Tracker{
 
     //If the camera's unavailable
     else if(t % 30 == 0){
-      println("Camera " + camNumber + " is unavailable");
+      //println("Camera " + camNumber + " is unavailable");
     }
   }
 
@@ -146,10 +146,11 @@ class Tracker{
     float yRatio = (float) mouseY / height;
 
     //Calculate the location in the image that is at the ratio calculated
-    int loc = (int) ((xRatio * cam.width) + (yRatio*cam.height)*cam.width);
+    int x = (int) (xRatio * cam.width);
+    int y = (int) (yRatio * cam.height);
 
     //Get the color at that location
-    color c = cam.pixels[loc];
+    color c = cam.get(x, y);
 
     //Separate the color into r, g, and b
     float r = red(c);
