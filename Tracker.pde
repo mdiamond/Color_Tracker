@@ -117,7 +117,7 @@ class Tracker{
 
     //If the camera's unavailable
     else if(t % 30 == 0){
-      //println("Camera " + camNumber + " is unavailable");
+     // println("Camera " + camNumber + " is unavailable");
     }
   }
 
@@ -158,11 +158,14 @@ class Tracker{
     float b = blue(c);
 
     //Get the color that was clicked, add it to the array of colors to track
-    if(numColors < targetColors.length - 1){
+    if(numColors < targetColors.length){
       targetColors[numColors][0] = r;
       targetColors[numColors][1] = g;
       targetColors[numColors][2] = b;
       numColors ++;
+      if(numColors <= targetColors.length){
+        println("Color added");
+      }
       if(numColors >= targetColors.length){
         println("Now tracking the maximum number of colors");
       }
