@@ -117,7 +117,7 @@ class Tracker{
 
     //If the camera's unavailable
     else if(t % 30 == 0){
-     // println("Camera " + camNumber + " is unavailable");
+      // println("Camera " + camNumber + " is unavailable");
     }
   }
 

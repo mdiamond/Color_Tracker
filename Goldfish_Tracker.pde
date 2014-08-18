@@ -31,7 +31,7 @@ String[] cameras;
  */
 void initialize(){
   //3D or not?
-  threeD = true;
+  threeD = false;
 
   //Size of the tank in pixels
   tankSize = 700;
@@ -58,7 +58,7 @@ void initialize(){
     notCarl = new Fish(width / 2, height / 2, 0);
 
     //Color tracker for (y, z)
-    yz = new Tracker(this, 131, 15);
+    yz = new Tracker(this, 162, 15);
   }
   //2D means different constructors for the Fish and Tank objects, and no need for two Tracker objects or rotation
   else{
@@ -130,11 +130,11 @@ void setup(){
  */
 void draw(){
   //In configuration mode, configure the trackers
-  if(xy.confMode || (yz.confMode && threeD)){
+  if(xy.confMode || (threeD && yz.confMode)){
     if(xy.confMode){
       xy.updateRender();
     }
-    if(threeD && yz.confMode){
+    else if(threeD && yz.confMode){
       yz.updateRender();
     }
   }
@@ -189,17 +189,24 @@ void mousePressed(){
 /* 
  * Increment keysPressed
  * Cycle through Tracker objects each time a key is pressed until all Tracker objects are configured
- * When all Tracker objects have been configured, disable configuration mode
+ * When a Tracker has been configured, disable configuration mode
  */
 void keyPressed(){
   keysPressed += 1;
   if(keysPressed == 1){
     saveFrame();
     xy.confMode = false;
+    if(threeD){
+      println("Configuring second camera");
+    }
+    else{
+      println("Configuration complete");
+    }
   }
   else if(keysPressed == 2 && threeD){
     saveFrame();
     yz.confMode = false;
     size(tankSize, tankSize, P3D);
+    println("Configuration complete");
   }
 }
