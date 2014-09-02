@@ -19,18 +19,27 @@ class Tracker{
   int numColors;
   //Number of times the coordinates have been requested
   int t;
+  //Number of times in a row the camera has been unavailable
+  int u;
   //Camera number
   int camNumber;
   //Configuring or not?
   boolean confMode;
+  //Camera name
+  String camName;
+  //Was this camera ever available?
+  boolean everAvailable;
+  //Whether or not an updated tracking is available
+  boolean updated;
 
   /* 
    * Constructor for the Tracker object ...
    * Sets up the tracker
    */
-  Tracker(Goldfish_Tracker that, int camNumber1, int trackingSensitivity1){
+  Tracker(int trackingSensitivity1, Capture cam1, String camName1){
+    cam = cam1;
+    camName = camName1;
     coordinates = new float[2];
-    cam = new Capture(that, cameras[camNumber]);
     targetColors = new float[8][];
     for(int i = 0; i < targetColors.length; i++){
       targetColors[i] = new float[3];
@@ -42,13 +51,15 @@ class Tracker{
     numPixels = 0;
     numColors = 0;
     t = 0;
-    camNumber = camNumber1;
+    u = 0;
     confMode = true;
+    everAvailable = false;
+    updated = true;
 
     cam.start();
   }
 
-  /*
+  /* 
    * Scan the image for a color one time given its index in the array of target colors
    */
   void scanPixels(int c){
@@ -62,7 +73,7 @@ class Tracker{
         float r1 = red(currentColor);
         float g1 = green(currentColor);
         float b1 = blue(currentColor);
-        
+
         //Euclidean distance
         float d = dist(r1, g1, b1, targetColors[c][0], targetColors[c][1], targetColors[c][2]);
 
@@ -70,7 +81,7 @@ class Tracker{
         if(d < trackingSensitivity){
           //Allows visual feedback on selection of colors to track
           if(confMode){
-            set((int) ((x / (float) cam.width) * width),(int) ((y / (float) cam.height) * height), white);
+            set((int) ((x / (float) cam.width) * width), (int) ((y / (float) cam.height) * height), white);
           }
           //Add to the total x and y values
           coordinates[0] += x;
@@ -81,47 +92,55 @@ class Tracker{
     }
   }
 
-
   /* 
    * Update the coordinates of the tracked color ...
    * Matches pixel colors and averages matched locations to decide where the object is
    */
   void updateRender(){
+    u += 1;
     if(cam.available()){
       cam.read();
-      if(confMode){
-        image(cam, 0, 0, width, height);
-      }
-
-      //Set up average location of the tracked colors as [x, y] or [y, z]
-      coordinates[0] = 0;
-      coordinates[1] = 0;
-      numPixels = 0;
-
-      for(int c = 0; c < targetColors.length && targetColors[c][1] != -1.0; c ++){
-        //Calculate averages
-        scanPixels(c);
-      }
-
-      //Calculate average x and y locations
-      if(numPixels != 0){
-        coordinates[0] /= numPixels;
-        coordinates[1] /= numPixels;
-      }
-
-      //Allows visual feedback on selection of colors to track
-      if(confMode){
-        rect((((coordinates[0] / cam.width) * width) - 15), (((coordinates[1] / cam.height) * height)  - 15), 30, 30);
-      }
+      u = 0;
+      updated = true;
     }
 
-    //If the camera's unavailable
-    else if(t % 30 == 0){
-      // println("Camera " + camNumber + " is unavailable");
+    if(confMode){
+      image(cam, 0, 0, width, height);
+    }
+
+    //Set up average location of the tracked colors as [x, y] or [y, z]
+    coordinates[0] = 0;
+    coordinates[1] = 0;
+    numPixels = 0;
+
+    //Add up pixel locations
+    for(int c = 0; c < targetColors.length && targetColors[c][1] != -1.0; c ++){
+      scanPixels(c);
+    }
+
+    //Calculate average x and y locations
+    if(numPixels != 0){
+      coordinates[0] /= numPixels;
+      coordinates[1] /= numPixels;
+    }
+
+    //Allows visual feedback on selection of colors to track
+    if(confMode){
+      rect((((coordinates[0] / cam.width) * width) - 15), (((coordinates[1] / cam.height) * height)  - 15), 30, 30);
+    }
+
+    //If the camera is unavailable 200 times in a row
+    if(u == 200){
+      println("CAMERA " + camName + " NOT AVAILABLE 200 TIMES IN A ROW. EXITING.");
+      exit();
+    }
+
+    else if(u > 0){
+      println("CAMERA " + camName + " NOT AVAILABLE " + u + " TIME(S)");
     }
   }
 
-  /*
+  /* 
    * Get the coordinates ...
    * Return the coordinates as a x:1 ratio so it is scalable to any size rendering
    */
@@ -164,14 +183,14 @@ class Tracker{
       targetColors[numColors][2] = b;
       numColors ++;
       if(numColors <= targetColors.length){
-        println("Color added");
+        println("COLOR ADDED");
       }
       if(numColors >= targetColors.length){
-        println("Now tracking the maximum number of colors");
+        println("NOW TRACKING THE MAXIMUM NUMBER OF COLORS");
       }
     }
     else{
-      println("Already tracking the maximum number of colors");
+      println("ALREADY TRACKING THE MAXIMUM NUMBER OF COLORS");
     }
   }
 

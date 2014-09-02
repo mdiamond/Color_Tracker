@@ -21,49 +21,23 @@ class Fish{
   }
 
   /* 
-   * Constructor for the Fish object ...
-   * Sets up the initial (x, y) location of the fish
-   */
-  Fish(int x1, int y1){
-    x = x1;
-    y = y1;
-  }
-
-  /* 
    * Update the fish ...
    * Updates the (x, y, z) coordinates of the fish
    */
-  void update3D(int x1, int y1, int z1){
+  void update(int x1, int y1, int z1){
     x = x1;
     y = y1;
     z = z1;
   }
 
   /* 
-   * Update the fish ...
-   * Updates the (x, y) coordinates of the fish
-   */
-  void update2D(int x1, int y1){
-    x = x1;
-    y = y1;
-  }
-
-  /* 
    * Render the fish ...
    * Renders the fish as a sphere
    */
-  void render3D(){
+  void render(){
     translate(x, y, z);
     sphere(25);
     translate(x * -1, y * -1, z * -1);
-  }
-
-  /* 
-   * Render the fish ...
-   * Render the fish as an ellipse
-   */
-  void render2D(){
-    ellipse(x, y, 40, 25);
   }
 
 }

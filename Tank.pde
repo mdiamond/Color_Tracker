@@ -28,32 +28,13 @@ class Tank{
   }
 
   /* 
-   * Constructor for the Tank object ...
-   * Sets up the location and size of the tank
-   */
-  Tank(int x1, int y1, int sizeX1, int sizeY1){
-    x = x1;
-    y = y1;
-    sizeX = sizeX1;
-    sizeY = sizeY1;
-  }
-
-  /* 
    * Render the tank ...
    * Renders the tank
    */
-  void render3D(){
+  void render(){
     translate(x, y, z);
     box(sizeX, sizeY, sizeZ);
     translate(x * -1, y * -1, z * -1);
-  }
-
-  /* 
-   * Render the tank ...
-   * Renders the tank
-   */
-  void render2D(){
-    rect(1, 1, sizeX, sizeY);
   }
 
 }

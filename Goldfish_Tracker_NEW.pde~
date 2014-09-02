@@ -1,0 +1,27 @@
+import processing.video.*;
+
+//3D or not?
+boolean threeD;
+//Size of the tank in pixels
+int tankSize;
+//Screen resolution
+int resX;
+int resY;
+//The number of times any key has been pressed
+int keysPressed;
+//Colors
+color black;
+color white;
+color red;
+color green;
+color blue;
+//The Tank object
+Tank fishTank;
+//The Fish oject
+Fish notCarl;
+//The color trackers
+Tracker xy;
+Tracker yz;
+//A list of the cameras available for use
+String[] cameras;
+

@@ -1,17 +1,13 @@
 import processing.video.*;
 
-//3D or not?
-boolean threeD;
-//Size of the tank in pixels
-int tankSize;
+//Screen resolution
+int resX;
+int resY;
 //The number of times any key has been pressed
 int keysPressed;
 //Colors
 color black;
 color white;
-color red;
-color green;
-color blue;
 //The Tank object
 Tank fishTank;
 //The Fish oject
@@ -19,6 +15,9 @@ Fish notCarl;
 //The color trackers
 Tracker xy;
 Tracker yz;
+//Cameras for the trackers
+Capture cam;
+Capture cam1;
 //A list of the cameras available for use
 String[] cameras;
 
@@ -30,72 +29,29 @@ String[] cameras;
  * Initialize all major objects and variables
  */
 void initialize(){
-  //3D or not?
-  threeD = false;
-
-  //Size of the tank in pixels
-  tankSize = 700;
+  //Screen resolution
+  resX = 1364;
+  resY = 766;
   //The number of times a key has been pressed
   keysPressed = 0;
   
   //Colors
   black = color(0, 0, 0);
   white = color(255, 255, 255);
-  red = color(255, 0, 0);
-  green = color(0, 255, 0);
-  blue = color(0, 0, 255);
 
-  //A list of the cameras available for use
-  cameras = Capture.list();
+  //Color trackers
+  String camName = "name=/dev/video1,size=1280x960,fps=15/2";
+  String camName1 = "name=/dev/video2,size=640x480,fps=30";
+  cam = new Capture(this, camName);
+  cam1 = new Capture(this, camName1);
+  xy = new Tracker(15, cam, camName);
+  yz = new Tracker(15, cam1, camName1);
 
-  //Color tracker for (x, y)
-  xy = new Tracker(this, 0, 15);
-  
-  //3D means another color to track, another Tracker object, and rotation
-  if(threeD){
-    //Objects to render
-    fishTank = new Tank(width / 2, height / 2, -350, tankSize, tankSize, tankSize);
-    notCarl = new Fish(width / 2, height / 2, 0);
+  //Tank
+  fishTank = new Tank(width / 2, height / 2, -350, 700, 700, 700);
+  //Fish
+  notCarl = new Fish(width / 2, height / 2, 0);
 
-    //Color tracker for (y, z)
-    yz = new Tracker(this, 162, 15);
-  }
-  //2D means different constructors for the Fish and Tank objects, and no need for two Tracker objects or rotation
-  else{
-    //Objects to render
-    fishTank = new Tank(width / 2, height / 2, tankSize - 2, tankSize - 2);
-    notCarl = new Fish(width / 2, height / 2);
-  }
-}
-
-/* 
- * List available cameras, exit if there are none
- */
-void listCameras(){
-  if(cameras.length == 0){
-    println("There are no cameras available for capture.");
-    exit();
-  }
-  else{
-    println("Available cameras:");
-    for(int i = 0; i < cameras.length; i++){
-      println(i + ":" + cameras[i]);
-    }
-  }
-}
-
-/* 
- * Set the size and 3D-ness of the rendering
- */
-void setSize(){
-  //3D means an extra argument must be passed to size
-//   if(threeD){
-//     size(tankSize, tankSize, P3D);
-//   }
-//   //2D means only x and y dimensions must be specified
-//   else{
-    size(tankSize, tankSize);
-//   }
 }
 
 /*******************/
@@ -106,19 +62,21 @@ void setSize(){
  * Initialize, print out list of cameras, etc.
  */
 void setup(){
+  //Set the size of the rendering
+  size(700, 700, P3D);
+  println("DONE SETTING SIZE");
+
   //Get variables and objects ready
   initialize();
-
-  //Show camera selection
-  listCameras();
-  
-  //Set the size of the rendering
-  setSize();
+  println("DONE INITIALIZING");
 
   //Set rendering colors
   stroke(white);
   noFill();
   background(black);
+  println("DONE SETTING RENDERING COLORS");
+
+  println("RUNNING draw()");
 }
 
 /*******************/
@@ -130,41 +88,42 @@ void setup(){
  */
 void draw(){
   //In configuration mode, configure the trackers
-  if(xy.confMode || (threeD && yz.confMode)){
+  if(xy.confMode || yz.confMode){
     if(xy.confMode){
       xy.updateRender();
     }
-    else if(threeD && yz.confMode){
+    else if(yz.confMode){
       yz.updateRender();
     }
   }
 
   //No longer in configuration mode, run the application
   else{
-    background(black);
+    //If both trackers have new information
+    if(xy.updated && yz.updated){
+      background(black);
 
-    //Get the coordinates from the first tracker
-    xy.updateRender();
-    float x = xy.getCoordinates()[0] * fishTank.sizeX;
-    float y = xy.getCoordinates()[1] * fishTank.sizeY;
+      //Get the coordinates from the first tracker
+      xy.updateRender();
+      float x = xy.getCoordinates()[0] * fishTank.sizeX;
+      float y = xy.getCoordinates()[1] * fishTank.sizeY;
 
-    //3D means using the second Tracker object, and calling 3D methods
-    if(threeD){
       //Get the coordinates from the second tracker
       yz.updateRender();
-      float z = yz.getCoordinates()[0] * fishTank.sizeZ;
+      float z = (yz.getCoordinates()[0] * fishTank.sizeZ) * -1;
 
       //Update and render
-      notCarl.update3D((int) x, (int) y, (int) z);
-      notCarl.render3D();
-      fishTank.render3D();
+      notCarl.update((int) x, (int) y, (int) z);
+      notCarl.render();
+      fishTank.render();
+
+      //Reset updated status of the trackers
+      xy.updated = false;
+      yz.updated = false;
     }
-    //2D means no second Tracker object, and calling 2D methods
     else{
-      //Update and render
-      notCarl.update2D((int) x, (int) y);
-      notCarl.render2D();
-      fishTank.render2D();
+      xy.updateRender();
+      yz.updateRender();
     }
   }
 }
@@ -181,7 +140,7 @@ void mousePressed(){
   if(keysPressed == 0){
     xy.addColor();
   }
-  else if(keysPressed == 1 && threeD){
+  else if(keysPressed == 1){
     yz.addColor();
   }
 }
@@ -196,17 +155,11 @@ void keyPressed(){
   if(keysPressed == 1){
     saveFrame();
     xy.confMode = false;
-    if(threeD){
-      println("Configuring second camera");
-    }
-    else{
-      println("Configuration complete");
-    }
+    println("CONFIGURING SECOND CAMERA");
   }
-  else if(keysPressed == 2 && threeD){
+  else if(keysPressed == 2){
     saveFrame();
     yz.confMode = false;
-    size(tankSize, tankSize, P3D);
-    println("Configuration complete");
+    println("CONFIGURATION COMPlETE");
   }
 }
