@@ -10,9 +10,13 @@ application.macosx
 # Vim
 *.vim
 *.swp
+*.swo
 
 # Sub-folders
 */
 
 # Images
 *.tif
+
+# Logs
+*.log
