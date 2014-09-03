@@ -128,17 +128,20 @@ void draw(){
 
       //Get the coordinates from the first tracker
       xy.update();
-      float x = xy.getCoordinates()[0] * 10000;
-      float y = xy.getCoordinates()[1] * 10000;
+      float x = xy.getCoordinates()[0] * 1000;
+      float y = xy.getCoordinates()[1] * 1000;
 
       //Get the coordinates from the second tracker
       yz.update();
-      float z = (yz.getCoordinates()[0] * 10000) * -1;
+      float z = (yz.getCoordinates()[0] * 1000) * -1;
 
-      //Send packet
+      //Send packets
       server.write((int) x);
       server.write((int) y);
       server.write((int) z);
+
+      println(x, y, z);
+      println((int) x, (int) y, (int) z);
 
       //Reset updated status of the trackers
       xy.updated = false;

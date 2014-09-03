@@ -19,9 +19,9 @@ Fish notCarl;
 //Client
 Client client;
 //x, y, z
-float x;
-float y;
-float z;
+int x;
+int y;
+int z;
 //Variables representing whether or not x, y, z have all been updated
 boolean xU;
 boolean yU;
@@ -36,8 +36,8 @@ boolean zU;
  */
 void initialize(){
   //Screen resolution
-  resX = 1364;
-  resY = 766;
+  resX = 700;
+  resY = 500;
   resZ = 500;
 
   //x, y, z
@@ -72,7 +72,7 @@ void initialize(){
  */
 void setup(){
   //Set the size of the rendering
-  size(1364, 766, P3D);
+  size(700, 500, P3D);
   println("DONE SETTING SIZE");
 
   //Get variables and objects ready
@@ -98,16 +98,16 @@ void setup(){
 void draw(){
   background(black);
 
-  if(client.available() > 0 && xU == false){
-    x = client.read() / 10000.0;
+  if(xU == false && client.available() > 0){
+    x = client.read();
     xU = true;
   }
-  if(client.available() > 0 && yU == false){
-    y = client.read() / 10000.0;
+  if(yU == false && xU == true && client.available() > 0){
+    y = client.read();
     yU = true;
   }
-  if(client.available() > 0 && zU == false){
-    z = client.read() / 10000.0;
+  if(zU == false && xU == true && yU == true && client.available() > 0){
+    z = client.read();
     zU = true;
   }
 
@@ -119,4 +119,5 @@ void draw(){
     xU = false;
     yU = false;
     zU = false;
+    println(x, y, z);
 }

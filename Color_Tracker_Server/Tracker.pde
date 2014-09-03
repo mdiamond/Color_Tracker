@@ -148,7 +148,7 @@ class Tracker{
     result[0] = coordinates[0] / cam.width;
     result[1] = coordinates[1] / cam.height;
     if(t % 30 == 0){
-      println(result[0], result[1], numPixels);
+      //println(result[0], result[1], numPixels);
     }
     t++;
     return result;

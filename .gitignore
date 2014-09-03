@@ -17,3 +17,6 @@ application.macosx
 
 # Logs
 *.log
+
+# Unecessary folder
+*/~/
