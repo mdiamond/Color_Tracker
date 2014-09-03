@@ -12,9 +12,6 @@ application.macosx
 *.swp
 *.swo
 
-# Sub-folders
-*/
-
 # Images
 *.tif
 
