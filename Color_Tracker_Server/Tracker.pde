@@ -5,10 +5,12 @@
  */
 class Tracker{
 
-  //Coordinates
-  float[] coordinates;
   //Camera to capture from 
   Capture cam;
+  //Camera name
+  String camName;
+  //Coordinates
+  float[] coordinates;
   //Colors to be tracked
   float[][] targetColors;
   //Sensitivity: lower will select fewer pixels
@@ -17,16 +19,10 @@ class Tracker{
   int numPixels;
   //Number of colors being tracked
   int numColors;
-  //Number of times the coordinates have been requested
-  int t;
   //Number of times in a row the camera has been unavailable
   int u;
-  //Camera number
-  int camNumber;
   //Configuring or not?
   boolean confMode;
-  //Camera name
-  String camName;
   //Was this camera ever available?
   boolean everAvailable;
   //Whether or not an updated tracking is available
@@ -39,23 +35,30 @@ class Tracker{
   Tracker(int trackingSensitivity1, Capture cam1, String camName1){
     cam = cam1;
     camName = camName1;
+
     coordinates = new float[2];
+
     targetColors = new float[8][];
+    //Fill targetColors with dummy data
     for(int i = 0; i < targetColors.length; i++){
       targetColors[i] = new float[3];
       for(int j = 0; j < 3; j++){
         targetColors[i][j] = -1.0;
       }
     }
+
+    //ints
     trackingSensitivity = trackingSensitivity1;
     numPixels = 0;
     numColors = 0;
-    t = 0;
     u = 0;
+
+    //booleans
     confMode = true;
     everAvailable = false;
     updated = true;
 
+    //Prepare the camera for capture
     cam.start();
   }
 
@@ -84,6 +87,7 @@ class Tracker{
           if(confMode){
             set((int) ((x / (float) cam.width) * width), (int) ((y / (float) cam.height) * height), white);
           }
+
           //Add to the total x and y values
           coordinates[0] += x;
           coordinates[1] += y;
@@ -147,10 +151,7 @@ class Tracker{
     float[] result = new float[2];
     result[0] = coordinates[0] / cam.width;
     result[1] = coordinates[1] / cam.height;
-    if(t % 30 == 0){
-      //println(result[0], result[1], numPixels);
-    }
-    t++;
+
     return result;
   }
 

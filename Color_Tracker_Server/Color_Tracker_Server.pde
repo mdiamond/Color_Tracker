@@ -31,7 +31,6 @@ Server server;
  * Initialize all major objects and variables
  */
 void initialize(){
-
   //Number of keypresses
   keysPressed = 0;
 
@@ -49,7 +48,6 @@ void initialize(){
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
   yz = new Tracker(15, cam1, camName1);
-
   cameras = Capture.list();
 
   //Server
@@ -139,7 +137,7 @@ void draw(){
 
       //Send packet
       server.write(x + "," + y + "," + z);
-
+      //Debug output
       println(x, y, z);
 
       //Reset updated status of the trackers

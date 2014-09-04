@@ -41,8 +41,8 @@ void initialize(){
   //Fish
   notCarl = new Fish(width / 2, height / 2, -200);
 
+  //Client
   client = new Client(this, "127.0.0.1", 5787);
-
 }
 
 /*******************/
