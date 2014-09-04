@@ -42,13 +42,13 @@ void initialize(){
   black = color(0, 0, 0);
 
   //Cameras and Color trackers
-  String camName = "name=/dev/video1,size=1280x960,fps=15/2";
-  String camName1 = "name=/dev/video2,size=640x480,fps=30";
+  cameras = Capture.list();
+  String camName = "name=USB Camera #2,size=1280x960,fps=30";
+  String camName1 = "name=Logitech Camera #2,size=1024x768,fps=30";
   cam = new Capture(this, camName);
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
   yz = new Tracker(15, cam1, camName1);
-  cameras = Capture.list();
 
   //Server
   server = new Server(this, 5787);
