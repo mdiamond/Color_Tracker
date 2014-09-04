@@ -109,6 +109,8 @@ void setup(){
  * Update all information and serve it, display averages
  */
 void draw(){
+  Client client = server.available();
+
   background(black);
 
   //In configuration mode, configure the trackers
@@ -128,20 +130,17 @@ void draw(){
 
       //Get the coordinates from the first tracker
       xy.update();
-      float x = xy.getCoordinates()[0] * 1000;
-      float y = xy.getCoordinates()[1] * 1000;
+      float x = xy.getCoordinates()[0];
+      float y = xy.getCoordinates()[1];
 
       //Get the coordinates from the second tracker
       yz.update();
-      float z = (yz.getCoordinates()[0] * 1000) * -1;
+      float z = yz.getCoordinates()[0] * -1;
 
-      //Send packets
-      server.write((int) x);
-      server.write((int) y);
-      server.write((int) z);
+      //Send packet
+      server.write(x + "," + y + "," + z);
 
       println(x, y, z);
-      println((int) x, (int) y, (int) z);
 
       //Reset updated status of the trackers
       xy.updated = false;

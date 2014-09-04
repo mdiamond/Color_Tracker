@@ -18,14 +18,6 @@ Tank fishTank;
 Fish notCarl;
 //Client
 Client client;
-//x, y, z
-int x;
-int y;
-int z;
-//Variables representing whether or not x, y, z have all been updated
-boolean xU;
-boolean yU;
-boolean zU;
 
 /*******************/
 /*     HELPERS     */
@@ -36,20 +28,10 @@ boolean zU;
  */
 void initialize(){
   //Screen resolution
-  resX = 700;
-  resY = 500;
-  resZ = 500;
+  resX = 800;
+  resY = 600;
+  resZ = 600;
 
-  //x, y, z
-  x = 0;
-  y = 0;
-  z = 0;
-
-  //x, y, z updated booleans
-  xU = false;
-  yU = false;
-  zU = false;
-  
   //Colors
   black = color(0, 0, 0);
   white = color(255, 255, 255);
@@ -72,7 +54,7 @@ void initialize(){
  */
 void setup(){
   //Set the size of the rendering
-  size(700, 500, P3D);
+  size(800, 800, P3D);
   println("DONE SETTING SIZE");
 
   //Get variables and objects ready
@@ -96,28 +78,22 @@ void setup(){
  * Update all information and render
  */
 void draw(){
-  background(black);
 
-  if(xU == false && client.available() > 0){
-    x = client.read();
-    xU = true;
-  }
-  if(yU == false && xU == true && client.available() > 0){
-    y = client.read();
-    yU = true;
-  }
-  if(zU == false && xU == true && yU == true && client.available() > 0){
-    z = client.read();
-    zU = true;
-  }
+  float[] ratios;
+  int[] coordinates;
+  
+  if(client.available() > 0){
+    ratios = float(split(client.readString(), ","));
+    coordinates = new int[3];
+    coordinates[0] = (int) (ratios[0] * resX);
+    coordinates[1] = (int) (ratios[1] * resY);
+    coordinates[2] = (int) (ratios[2] * resZ);
 
-  if(xU && yU && zU);
     //Update and render
-    notCarl.update((int) (x * resX), (int) (y * resY), (int) ((z * resZ) - 200));
+    notCarl.update(coordinates[0], coordinates[1], coordinates[2] - 200);
+    background(black);
     notCarl.render();
     fishTank.render();
-    xU = false;
-    yU = false;
-    zU = false;
-    println(x, y, z);
+    println(coordinates[0], coordinates[1], coordinates[2]);
+  }
 }
