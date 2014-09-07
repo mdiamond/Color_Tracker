@@ -56,7 +56,7 @@ class Tracker{
     //booleans
     confMode = true;
     everAvailable = false;
-    updated = true;
+    updated = false;
 
     //Prepare the camera for capture
     cam.start();
@@ -129,8 +129,10 @@ class Tracker{
       coordinates[1] /= numPixels;
     }
 
-    //Allows visual feedback on selection of colors to track
-    rect((((coordinates[0] / cam.width) * width) - 15), (((coordinates[1] / cam.height) * height)  - 15), 30, 30);
+    if(confMode){
+      //Allows visual feedback on selection of colors to track
+      rect((((coordinates[0] / cam.width) * width) - 15), (((coordinates[1] / cam.height) * height)  - 15), 30, 30);
+    }
 
     //If the camera is unavailable 200 times in a row
     if(u == 200){

@@ -7,8 +7,6 @@ import processing.net.*;
 
 //The number of times any key has been pressed
 int keysPressed;
-//Size
-int size;
 //Colors
 color white;
 color black;
@@ -34,17 +32,14 @@ void initialize(){
   //Number of keypresses
   keysPressed = 0;
 
-  //Arbitrary size
-  size = 700;
-
   //Colors
   white = color(255, 255, 255);
   black = color(0, 0, 0);
 
   //Cameras and Color trackers
   cameras = Capture.list();
-  String camName = "name=USB Camera #2,size=1280x960,fps=30";
-  String camName1 = "name=Logitech Camera #2,size=1024x768,fps=30";
+  String camName = cameras[15];
+  String camName1 = cameras[0];
   cam = new Capture(this, camName);
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
@@ -79,7 +74,7 @@ void listCameras(){
  */
 void setup(){
   //Set the size of the rendering
-  size(700, 700);
+  size(1024, 576);
   println("DONE SETTING SIZE");
 
   //Get variables and objects ready
@@ -109,8 +104,6 @@ void setup(){
 void draw(){
   Client client = server.available();
 
-  background(black);
-
   //In configuration mode, configure the trackers
   if(xy.confMode || yz.confMode){
     if(xy.confMode){
@@ -125,29 +118,37 @@ void draw(){
   else{
     //If both trackers have new information
     if(xy.updated && yz.updated){
-
-      //Get the coordinates from the first tracker
-      xy.update();
+      //Get all 3 coordinates
       float x = xy.getCoordinates()[0];
       float y = xy.getCoordinates()[1];
-
-      //Get the coordinates from the second tracker
-      yz.update();
       float z = yz.getCoordinates()[0] * -1;
-
+      
       //Send packet
       server.write(x + "," + y + "," + z);
-      //Debug output
-      println(x, y, z);
-
+      
       //Reset updated status of the trackers
       xy.updated = false;
       yz.updated = false;
+
+      //Send packet
+      server.write(x + "," + y + "," + z);
+      
+      //Reset debug rendering
+      background(black);
+      
+      //Debug output
+      println(x, y, z);
+      image(cam, 0, height / 4, width / 2, height / 2);
+      image(cam1, width / 2, height / 4, width / 2, height / 2);
+      xy.update();
+      yz.update();
     }
     else{
       xy.update();
       yz.update();
     }
+    rect((((xy.coordinates[0] / cam.width) * width) - 7) / 2, ((((xy.coordinates[1] / cam.height) * height)  - 7) / 2) + height / 4, 15, 15);
+    rect(((((yz.coordinates[0] / cam1.width) * width) - 7) / 2) + width / 2, (((yz.coordinates[1] / cam1.height) * height)  - 7), 15, 15);
   }
 }
 

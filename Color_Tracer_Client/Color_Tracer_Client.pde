@@ -12,10 +12,8 @@ int resZ;
 //Colors
 color black;
 color white;
-//The Tank object
-Tank fishTank;
-//The Fish oject
-Fish notCarl;
+//Trace object
+Trace trace;
 //Client
 Client client;
 
@@ -36,10 +34,8 @@ void initialize(){
   black = color(0, 0, 0);
   white = color(255, 255, 255);
 
-  //Tank
-  fishTank = new Tank(width / 2, height / 2, ((resX * -1) / 2) - 200, resX, resY, resZ);
-  //Fish
-  notCarl = new Fish(width / 2, height / 2, -200);
+  //Trace
+  trace = new Trace();
 
   //Client
   client = new Client(this, "medman826.servequake.com", 5787);
@@ -80,22 +76,20 @@ void setup(){
 void draw(){
 
   float[] ratios;
-  int[] coordinates;
+  int[] coordinates = new int[3];
   
   if(client.available() > 0){
     ratios = float(split(client.readString(), ","));
     if(ratios.length == 3){
-      coordinates = new int[3];
       coordinates[0] = (int) (ratios[0] * resX);
       coordinates[1] = (int) (ratios[1] * resY);
       coordinates[2] = (int) (ratios[2] * resZ);
+      trace.update(new Coordinates(coordinates[0], coordinates[1], coordinates[2]));
 
       //Update and render
       if(coordinates[0] <= resX && coordinates[1] <= resY && coordinates[2] <= resZ){
-        notCarl.update(coordinates[0], coordinates[1], coordinates[2] - 200);
         background(black);
-        notCarl.render();
-        fishTank.render();
+        trace.render();
         println(coordinates[0], coordinates[1], coordinates[2]);
       }
     }
