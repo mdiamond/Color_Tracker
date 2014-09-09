@@ -102,6 +102,7 @@ class Tracker{
    * Matches pixel colors and averages matched locations to decide where the object is
    */
   void update(){
+    //Check if the camera is available and keep track of how many times it isn't
     u += 1;
     if(cam.available()){
       cam.read();
@@ -109,6 +110,7 @@ class Tracker{
       updated = true;
     }
 
+    //Display the video feed at the size of the window if configuring
     if(confMode){
       image(cam, 0, 0, width, height);
     }
@@ -129,8 +131,8 @@ class Tracker{
       coordinates[1] /= numPixels;
     }
 
+     //Display visual feedback on configuration that shows the averaged location of the tracked colors as you add them
     if(confMode){
-      //Allows visual feedback on selection of colors to track
       rect((((coordinates[0] / cam.width) * width) - 15), (((coordinates[1] / cam.height) * height)  - 15), 30, 30);
     }
 

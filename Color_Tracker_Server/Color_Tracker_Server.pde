@@ -122,33 +122,31 @@ void draw(){
       float x = xy.getCoordinates()[0];
       float y = xy.getCoordinates()[1];
       float z = yz.getCoordinates()[0] * -1;
-      
+
       //Send packet
       server.write(x + "," + y + "," + z);
-      
+
       //Reset updated status of the trackers
       xy.updated = false;
       yz.updated = false;
 
-      //Send packet
-      server.write(x + "," + y + "," + z);
-      
       //Reset debug rendering
       background(black);
-      
-      //Debug output
+
+      //Debug rendering shows you the current state of the trackers
       println(x, y, z);
       image(cam, 0, height / 4, width / 2, height / 2);
       image(cam1, width / 2, height / 4, width / 2, height / 2);
       xy.update();
       yz.update();
+      rect((((xy.coordinates[0] / cam.width) * width) - 7) / 2, ((((xy.coordinates[1] / cam.height) * height)  - 7) / 2) + height / 4, 15, 15);
+      rect(((((yz.coordinates[0] / cam1.width) * width) - 7) / 2) + width / 2, (((yz.coordinates[1] / cam1.height) * height)  - 7), 15, 15);
     }
+    //If either tracker is out of date, attempt to update both of them
     else{
       xy.update();
       yz.update();
     }
-    rect((((xy.coordinates[0] / cam.width) * width) - 7) / 2, ((((xy.coordinates[1] / cam.height) * height)  - 7) / 2) + height / 4, 15, 15);
-    rect(((((yz.coordinates[0] / cam1.width) * width) - 7) / 2) + width / 2, (((yz.coordinates[1] / cam1.height) * height)  - 7), 15, 15);
   }
 }
 

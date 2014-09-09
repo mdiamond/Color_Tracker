@@ -77,7 +77,7 @@ void draw(){
 
   float[] ratios;
   int[] coordinates = new int[3];
-  
+
   if(client.available() > 0){
     ratios = float(split(client.readString(), ","));
     if(ratios.length == 3){
