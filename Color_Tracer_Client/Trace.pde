@@ -29,7 +29,12 @@ class Trace{
     if(coordinates.size() > 1){
       for(int i = 1; i < coordinates.size(); i ++){
         line(coordinates.get(i - 1).x, coordinates.get(i - 1).y, coordinates.get(i - 1).z, coordinates.get(i).x, coordinates.get(i).y, coordinates.get(i).z);
+        translate(coordinates.get(i).x, coordinates.get(i).y, coordinates.get(i).z);
+        sphere(1);
+        translate(coordinates.get(i).x * -1, coordinates.get(i).y * -1, coordinates.get(i).z * -1);
+
       }
     }
   }
+
 }

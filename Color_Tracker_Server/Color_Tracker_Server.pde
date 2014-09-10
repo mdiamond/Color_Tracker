@@ -37,9 +37,8 @@ void initialize(){
   black = color(0, 0, 0);
 
   //Cameras and Color trackers
-  cameras = Capture.list();
-  String camName = cameras[15];
-  String camName1 = cameras[0];
+  String camName = "name=USB Camera,size=1280x960,fps=30";
+  String camName1 = "name=USB Camera #2,size=1280x960,fps=30";
   cam = new Capture(this, camName);
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
@@ -77,19 +76,21 @@ void setup(){
   size(1024, 576);
   println("DONE SETTING SIZE");
 
+  //List cameras
+  cameras = Capture.list();
+  listCameras();
+  println("DONE LISTING CAMERAS");
+
   //Get variables and objects ready
   initialize();
   println("DONE INITIALIZING");
 
   //Set rendering colors
   noFill();
-  stroke(white);
+  stroke(black);
+  strokeWeight(2);
   background(black);
   println("DONE SETTING RENDERING COLORS");
-
-  //List cameras
-  listCameras();
-  println("DONE LISTING CAMERAS");
 
   println("RUNNING draw()");
 }
@@ -122,7 +123,7 @@ void draw(){
       float x = xy.getCoordinates()[0];
       float y = xy.getCoordinates()[1];
       float z = yz.getCoordinates()[0] * -1;
-
+ 
       //Send packet
       server.write(x + "," + y + "," + z);
 
@@ -130,23 +131,25 @@ void draw(){
       xy.updated = false;
       yz.updated = false;
 
+      //Send packet
+      server.write(x + "," + y + "," + z);
+
       //Reset debug rendering
       background(black);
 
-      //Debug rendering shows you the current state of the trackers
+      //Debug output
       println(x, y, z);
       image(cam, 0, height / 4, width / 2, height / 2);
       image(cam1, width / 2, height / 4, width / 2, height / 2);
       xy.update();
       yz.update();
-      rect((((xy.coordinates[0] / cam.width) * width) - 7) / 2, ((((xy.coordinates[1] / cam.height) * height)  - 7) / 2) + height / 4, 15, 15);
-      rect(((((yz.coordinates[0] / cam1.width) * width) - 7) / 2) + width / 2, (((yz.coordinates[1] / cam1.height) * height)  - 7), 15, 15);
     }
-    //If either tracker is out of date, attempt to update both of them
     else{
       xy.update();
       yz.update();
     }
+    rect((((xy.coordinates[0] / cam.width) * width) - 7) / 2, ((((xy.coordinates[1] / cam.height) * height)  - 7) / 2) + height / 4, 15, 15);
+    rect(((((yz.coordinates[0] / cam1.width) * width) - 7) / 2) + width / 2, (((yz.coordinates[1] / cam1.height) * height)  - 7), 15, 15);
   }
 }
 
