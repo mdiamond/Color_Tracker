@@ -27,12 +27,20 @@ class Trace{
    */
   void render(){
     if(coordinates.size() > 1){
-      for(int i = 1; i < coordinates.size(); i ++){
+      int low = 65;
+      int high = 255;
+      float percent;
+      int num = coordinates.size();
+      int alpha;
+      for(int i = 1; i < num; i ++){
+        percent = i / (float) num;
+        alpha = (int) ((percent * high) + low);
+        stroke(white, alpha);
+        fill(white, alpha);
         line(coordinates.get(i - 1).x, coordinates.get(i - 1).y, coordinates.get(i - 1).z, coordinates.get(i).x, coordinates.get(i).y, coordinates.get(i).z);
         translate(coordinates.get(i).x, coordinates.get(i).y, coordinates.get(i).z);
-        sphere(1);
+        sphere(.5);
         translate(coordinates.get(i).x * -1, coordinates.get(i).y * -1, coordinates.get(i).z * -1);
-
       }
     }
   }

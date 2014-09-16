@@ -73,7 +73,7 @@ void listCameras(){
  */
 void setup(){
   //Set the size of the rendering
-  size(1024, 576);
+  size(1280, 720);
   println("DONE SETTING SIZE");
 
   //List cameras

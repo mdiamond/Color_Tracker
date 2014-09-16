@@ -89,17 +89,19 @@ void draw(){
     ratios = float(split(client.readString(), ","));
     if(ratios.length == 3 && ratios[0] < 1 && ratios[1] < 1 && ratios[2] < 1){
       //Calculate the coordinates relative to our 3D space
-      coordinates[0] = (int) (ratios[0] * resX);
-      coordinates[1] = (int) (ratios[1] * resY);
-      coordinates[2] = (int) (ratios[2] * resZ);
+      coordinates[0] = (int) (ratios[0] * resX * 1.5);
+      coordinates[1] = (int) (ratios[1] * resY * 1.5);
+      coordinates[2] = (int) (ratios[2] * resZ * 2);
 
       //Add a new set of coordinates to the trace
       trace.update(new Coordinates(coordinates[0], coordinates[1], coordinates[2]));
 
-      //Reset rendering, re-render, print coordinates
-      background(black);
-      trace.render();
+      //Print coordinates that were added
       println(coordinates[0], coordinates[1], coordinates[2]);
     }
   }
+
+  //Reset rendering, re-render, print coordinates
+  background(black);
+  trace.render();
 }
