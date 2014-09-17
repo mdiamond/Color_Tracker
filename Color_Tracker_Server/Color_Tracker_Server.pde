@@ -18,6 +18,8 @@ Capture cam;
 Capture cam1;
 //A list of the cameras available for use
 String[] cameras;
+//Coordinates that could not be written out yet
+ArrayList<String> notWritten;
 //The server
 Server server;
 
@@ -43,6 +45,9 @@ void initialize(){
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
   yz = new Tracker(10, cam1, camName1);
+
+  //Leftover coordinates
+  notWritten = new ArrayList<String>();
 
   //Server
   server = new Server(this, 5787);
@@ -138,9 +143,12 @@ void draw(){
       println(x, y, z);
       image(cam, 0, height / 4, width / 2, height / 2);
       image(cam1, width / 2, height / 4, width / 2, height / 2);
+
+      //Update again
       xy.update();
       yz.update();
     }
+    //If either tracker does not have new information
     else{
       xy.update();
       yz.update();

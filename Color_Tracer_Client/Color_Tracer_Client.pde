@@ -49,7 +49,7 @@ void initialize(){
 //  cam.setFreeRotationMode();
 
   //Client
-  client = new Client(this, "localhost", 5787);
+  client = new Client(this, "192.168.0.100", 5787);
 }
 
 /*******************/
