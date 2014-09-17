@@ -43,7 +43,7 @@ void initialize(){
   trace = new Trace();
 
   //Viewpoint camera
-  cam = new PeasyCam(this, resX / 2, resY / 2, (resZ / 2) * -1, 1000);
+  cam = new PeasyCam(this, resX, resY, resZ * -1, 1400);
   cam.setMinimumDistance(50);
   cam.setMaximumDistance(2000);
 //  cam.setFreeRotationMode();
@@ -90,21 +90,26 @@ void draw(){
 
   float[] ratios;
   int[] coordinates = new int[3];
+  String clientString;
 
   if(client.available() > 0){
-    ratios = float(split(client.readStringUntil(";"), ","));
-    ratios[2] = ratios[2].substring(ratios[2].length() - 1);
-    if(ratios.length == 3 && ratios[0] < 1 && ratios[1] < 1 && ratios[2] < 1){
-      //Calculate the coordinates relative to our 3D space
-      coordinates[0] = (int) (ratios[0] * resX * 1.5);
-      coordinates[1] = (int) (ratios[1] * resY * 1.5);
-      coordinates[2] = (int) (ratios[2] * resZ * 2);
+    clientString = client.readStringUntil(';');
+    if(clientString != null){
+      clientString = clientString.substring(0, clientString.length() - 1);
+      ratios = float(split(clientString, ","));
 
-      //Add a new set of coordinates to the trace
-      trace.update(new Coordinates(coordinates[0], coordinates[1], coordinates[2]));
+      if(ratios.length == 3){
+        //Calculate the coordinates relative to our 3D space
+        coordinates[0] = (int) (ratios[0] * resX * 2);
+        coordinates[1] = (int) (ratios[1] * resY * 2);
+        coordinates[2] = (int) (ratios[2] * resZ * 2);
 
-      //Print coordinates that were added
-      println(coordinates[0], coordinates[1], coordinates[2]);
+        //Add a new set of coordinates to the trace
+        trace.update(new Coordinates(coordinates[0], coordinates[1], coordinates[2]));
+
+        //Print coordinates that were added
+        println(coordinates[0], coordinates[1], coordinates[2]);
+      }
     }
   }
 
