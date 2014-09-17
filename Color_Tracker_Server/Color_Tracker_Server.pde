@@ -18,6 +18,8 @@ Capture cam;
 Capture cam1;
 //A list of the cameras available for use
 String[] cameras;
+//Coordinates that could not be written out yet
+ArrayList<String> notWritten;
 //The server
 Server server;
 
@@ -43,6 +45,9 @@ void initialize(){
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
   yz = new Tracker(10, cam1, camName1);
+
+  //Leftover coordinates
+  notWritten = new ArrayList<String>();
 
   //Server
   server = new Server(this, 5787);
@@ -124,26 +129,39 @@ void draw(){
       float y = xy.getCoordinates()[1];
       float z = yz.getCoordinates()[0] * -1;
  
-      //Send packet
-      server.write(x + "," + y + "," + z);
+      //Serve the most up to date coordinates if the server is available
+      if(server.available()){
+        //If there are leftover unwritten coordinates
+        if(notWritten.size() > 0){
+          server.write(notWritten.get(0));
+          notWritten.remove(0);
+        }
+        //If there are no leftover coordinates
+        else{
+          server.write(x + "," + y + "," + z);
 
+          //Reset debug rendering
+          background(black);
+
+          //Debug output
+          println(x, y, z);
+          image(cam, 0, height / 4, width / 2, height / 2);
+          image(cam1, width / 2, height / 4, width / 2, height / 2);
+        }
+      }
+      //Keep track of the coordinates that couldn't be sent
+      else{
+        notWritten.add(x + "," + y + "," + z);
+      }
       //Reset updated status of the trackers
       xy.updated = false;
-      yz.updated = false;
+      yz.updated = false
 
-      //Send packet
-      server.write(x + "," + y + "," + z);
-
-      //Reset debug rendering
-      background(black);
-
-      //Debug output
-      println(x, y, z);
-      image(cam, 0, height / 4, width / 2, height / 2);
-      image(cam1, width / 2, height / 4, width / 2, height / 2);
+      //Update again
       xy.update();
       yz.update();
     }
+    //If either tracker does not have new information
     else{
       xy.update();
       yz.update();
