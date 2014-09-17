@@ -92,7 +92,8 @@ void draw(){
   int[] coordinates = new int[3];
 
   if(client.available() > 0){
-    ratios = float(split(client.readString(), ","));
+    ratios = float(split(client.readStringUntil(";"), ","));
+    ratios[2] = ratios[2].substring(ratios[2].length() - 1);
     if(ratios.length == 3 && ratios[0] < 1 && ratios[1] < 1 && ratios[2] < 1){
       //Calculate the coordinates relative to our 3D space
       coordinates[0] = (int) (ratios[0] * resX * 1.5);

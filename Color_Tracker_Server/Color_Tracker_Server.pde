@@ -125,14 +125,11 @@ void draw(){
       float z = yz.getCoordinates()[0] * -1;
  
       //Send packet
-      server.write(x + "," + y + "," + z);
+      server.write(x + "," + y + "," + z + ";");
 
       //Reset updated status of the trackers
       xy.updated = false;
       yz.updated = false;
-
-      //Send packet
-      server.write(x + "," + y + "," + z);
 
       //Reset debug rendering
       background(black);
