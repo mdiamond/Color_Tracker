@@ -1,4 +1,4 @@
-/*lpha
+/* 
  *
  * Matthew Diamond 2014
  * A record of (x, y, z) coordinates
