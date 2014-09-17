@@ -13,6 +13,7 @@ int resZ;
 //Colors
 color black;
 color white;
+color red;
 //Trace object
 Trace trace;
 //Viewpoint camera
@@ -29,22 +30,26 @@ Client client;
  */
 void initialize(){
   //Screen resolution
-  resX = 800;
-  resY = 600;
+  resX = 1280;
+  resY = 720;
   resZ = 600;
 
   //Colors
   black = color(0, 0, 0);
   white = color(255, 255, 255);
+  red = color(255, 0, 0);
 
   //Trace
   trace = new Trace();
 
   //Viewpoint camera
-  cam = new PeasyCam(this, resX / 2, resY / 2, (resZ / 2) * -1, 1500);
+  cam = new PeasyCam(this, resX / 2, resY / 2, (resZ / 2) * -1, 1000);
+  cam.setMinimumDistance(50);
+  cam.setMaximumDistance(2000);
+//  cam.setFreeRotationMode();
 
   //Client
-  client = new Client(this, "192.168.0.100", 5787);
+  client = new Client(this, "localhost", 5787);
 }
 
 /*******************/
@@ -56,7 +61,7 @@ void initialize(){
  */
 void setup(){
   //Set the size of the rendering
-  size(800, 800, P3D);
+  size(1280, 720, P3D);
   println("DONE SETTING SIZE");
 
   //Get variables and objects ready
@@ -64,8 +69,9 @@ void setup(){
   println("DONE INITIALIZING");
 
   //Set rendering colors
+  smooth();
   stroke(white);
-  strokeWeight(15);
+  strokeWeight(3);
   noFill();
   background(black);
   println("DONE SETTING RENDERING COLORS");
