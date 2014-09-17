@@ -1,4 +1,5 @@
-/* 
+/*lpha
+ *
  * Matthew Diamond 2014
  * A record of (x, y, z) coordinates
  */
@@ -29,13 +30,13 @@ class Trace{
     if(coordinates.size() > 4){
       float percent;
       int num = coordinates.size();
-      int alpha;
+      int c;
       beginShape();
       curveVertex(coordinates.get(0).x, coordinates.get(0).y, coordinates.get(0).z);
       for(int i = 0; i < num; i ++){
         percent = i / (float) num;
-        alpha = (int) (percent * 255);
-        stroke(alpha);
+        c = (int) (percent * 255);
+        stroke(c);
         
         curveVertex(coordinates.get(i).x, coordinates.get(i).y, coordinates.get(i).z);
       }
