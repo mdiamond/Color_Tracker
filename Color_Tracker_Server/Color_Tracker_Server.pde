@@ -42,7 +42,7 @@ void initialize(){
   cam = new Capture(this, camName);
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
-  yz = new Tracker(15, cam1, camName1);
+  yz = new Tracker(10, cam1, camName1);
 
   //Server
   server = new Server(this, 5787);
