@@ -43,13 +43,16 @@ void initialize(){
   trace = new Trace();
 
   //Viewpoint camera
-  cam = new PeasyCam(this, resX, resY, resZ * -1, 1400);
-  cam.setMinimumDistance(50);
-  cam.setMaximumDistance(2000);
-//  cam.setFreeRotationMode();
+  cam = new PeasyCam(this, resX, resY, resZ * -1, 3000);
+  cam.setMinimumDistance(100);
+  cam.setMaximumDistance(3000);
 
   //Client
   client = new Client(this, "192.168.0.100", 5787);
+}
+
+boolean sketchFullScreen() {
+  return true;
 }
 
 /*******************/
