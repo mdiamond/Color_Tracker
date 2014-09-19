@@ -18,6 +18,10 @@ color red;
 Trace trace;
 //Viewpoint camera
 PeasyCam cam;
+//Font
+PFont f;
+//HUD string
+String hud;
 //Client
 Client client;
 
@@ -46,13 +50,20 @@ void initialize(){
   cam = new PeasyCam(this, resX, resY, resZ * -1, 3000);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(3000);
+  cam.setYawRotationMode();
+
+  //Font
+  f = createFont("Times New Roman", 16, true);
+
+  //HUD
+  hud = "Camera controls:\nRotate: left-click\nZoom: right-click or scroll\nPan: right-click & left-click\nReset: double-click";
 
   //Client
   client = new Client(this, "192.168.0.100", 5787);
 }
 
 boolean sketchFullScreen() {
-  return true;
+  return false;
 }
 
 /*******************/
@@ -77,6 +88,7 @@ void setup(){
   strokeWeight(3);
   noFill();
   background(black);
+  textFont(f);
   println("DONE SETTING RENDERING COLORS");
 
   println("RUNNING draw()");
@@ -118,5 +130,31 @@ void draw(){
 
   //Reset rendering, re-render, print coordinates
   background(black);
+  cam.beginHUD();
+  text(hud, 0, 0);
+  cam.endHUD();
   trace.render();
+}
+
+/*******************/
+/*     HELPERS     */
+/*******************/
+
+/* 
+ * Handle keypresses
+ */
+void keyPressed(){
+  switch(key){
+    //Reset the trace
+    case 'r':
+      trace.coordinates.clear();
+      break;
+    //Camera modes
+    case 'f':
+      cam.setFreeRotationMode();
+      break;
+    case 'y':
+      cam.setYawRotationMode();
+      break;
+  }
 }
