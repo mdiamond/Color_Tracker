@@ -5,11 +5,10 @@
 import processing.video.*;
 import processing.net.*;
 
-//The number of times any key has been pressed
-int keysPressed;
 //Colors
 color white;
 color black;
+color green;
 //The color trackers
 Tracker xy;
 Tracker yz;
@@ -18,8 +17,6 @@ Capture cam;
 Capture cam1;
 //A list of the cameras available for use
 String[] cameras;
-//Coordinates that could not be written out yet
-ArrayList<String> notWritten;
 //The server
 Server server;
 
@@ -31,12 +28,10 @@ Server server;
  * Initialize all major objects and variables
  */
 void initialize(){
-  //Number of keypresses
-  keysPressed = 0;
-
   //Colors
   white = color(255, 255, 255);
   black = color(0, 0, 0);
+  green = color(0, 255, 0);
 
   //Cameras and Color trackers
   String camName = "name=USB Camera,size=1280x960,fps=30";
@@ -45,9 +40,6 @@ void initialize(){
   cam1 = new Capture(this, camName1);
   xy = new Tracker(15, cam, camName);
   yz = new Tracker(10, cam1, camName1);
-
-  //Leftover coordinates
-  notWritten = new ArrayList<String>();
 
   //Server
   server = new Server(this, 5787);
@@ -92,7 +84,7 @@ void setup(){
 
   //Set rendering colors
   noFill();
-  stroke(black);
+  stroke(green);
   strokeWeight(2);
   background(black);
   println("DONE SETTING RENDERING COLORS");
@@ -125,9 +117,9 @@ void draw(){
     //If both trackers have new information
     if(xy.updated && yz.updated){
       //Get all 3 coordinates
-      float x = xy.getCoordinates()[0];
-      float y = xy.getCoordinates()[1];
-      float z = yz.getCoordinates()[0] * -1;
+      float x = xy.getRatios()[0];
+      float y = xy.getRatios()[1];
+      float z = yz.getRatios()[0] * -1;
  
       //Send packet
       server.write(x + "," + y + "," + z + ";");
@@ -153,8 +145,8 @@ void draw(){
       xy.update();
       yz.update();
     }
-    rect((((xy.coordinates[0] / cam.width) * width) - 7) / 2, ((((xy.coordinates[1] / cam.height) * height)  - 7) / 2) + height / 4, 15, 15);
-    rect(((((yz.coordinates[0] / cam1.width) * width) - 7) / 2) + width / 2, (((yz.coordinates[1] / cam1.height) * height)  - 7), 15, 15);
+    rect(((xy.getRatios()[0] * width) / 2) - 15, ((xy.getRatios()[1] * height) / 2) + (height / 4) - 15, 30, 30);
+    rect((((yz.getRatios()[0] * width) / 2) + (width / 2)) - 15, ((yz.getRatios()[1] * height) / 2) + (height / 4)  - 15, 30, 30);
   }
 }
 
@@ -167,10 +159,10 @@ void draw(){
  * Does nothing unless in configuration mode
  */
 void mousePressed(){
-  if(keysPressed == 0){
+  if(xy.confMode == true){
     xy.addColor();
   }
-  else if(keysPressed == 1){
+  else if(yz.confMode == true){
     yz.addColor();
   }
 }
@@ -181,12 +173,11 @@ void mousePressed(){
  * When a Tracker has been configured, disable configuration mode
  */
 void keyPressed(){
-  keysPressed += 1;
-  if(keysPressed == 1){
+  if(xy.confMode == true){
     xy.confMode = false;
     println("CONFIGURING SECOND CAMERA");
   }
-  else if(keysPressed == 2){
+  else if(yz.confMode == true){
     yz.confMode = false;
     println("CONFIGURATION COMPlETE");
   }

@@ -149,9 +149,21 @@ class Tracker{
 
   /* 
    * Get the coordinates ...
-   * Return the coordinates as a x:1 ratio so it is scalable to any size rendering
+   * Return the coordinates
    */
   float[] getCoordinates(){
+    float[] result = new float[2];
+    result[0] = coordinates[0];
+    result[1] = coordinates[1];
+
+    return result;
+  }
+  
+  /* 
+   * Get the coordinate ratios ...
+   * Return the coordinates as a x:1 ratio so it is scalable to any size rendering
+   */
+  float[] getRatios(){
     float[] result = new float[2];
     result[0] = coordinates[0] / cam.width;
     result[1] = coordinates[1] / cam.height;
