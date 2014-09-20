@@ -34,9 +34,9 @@ Client client;
  */
 void initialize(){
   //Screen resolution
-  resX = 1280;
-  resY = 720;
-  resZ = 600;
+  resX = 1920;
+  resY = 1080;
+  resZ = 1200 ;
 
   //Colors
   black = color(0, 0, 0);
@@ -59,11 +59,11 @@ void initialize(){
   hud = "Camera controls:\nRotate: left-click\nZoom: right-click or scroll\nPan: right-click & left-click\nReset: double-click";
 
   //Client
-  client = new Client(this, "192.168.0.100", 5787);
+  client = new Client(this, "169.254.29.229", 5787);
 }
 
 boolean sketchFullScreen() {
-  return false;
+  return true;
 }
 
 /*******************/
@@ -75,7 +75,7 @@ boolean sketchFullScreen() {
  */
 void setup(){
   //Set the size of the rendering
-  size(1280, 720, P3D);
+  size(1920, 1080, P3D);
   println("DONE SETTING SIZE");
 
   //Get variables and objects ready
