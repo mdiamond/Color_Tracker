@@ -113,7 +113,8 @@ void draw(){
       clientString = clientString.substring(0, clientString.length() - 1);
       ratios = float(split(clientString, ","));
 
-      if(ratios.length == 3){
+      //Alex, this is the line I changed!!!!!
+      if(ratios.length == 3 && ratios[0] != 0.0 && ratios[1] != 0.0 && ratios[2] != 0.0){
         //Calculate the coordinates relative to our 3D space
         coordinates[0] = (int) (ratios[0] * resX * 2);
         coordinates[1] = (int) (ratios[1] * resY * 2);

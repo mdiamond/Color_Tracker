@@ -198,9 +198,7 @@ class Tracker{
       targetColors[numColors][1] = g;
       targetColors[numColors][2] = b;
       numColors ++;
-      if(numColors <= targetColors.length){
-        println("COLOR ADDED");
-      }
+      println("COLOR ADDED");
       if(numColors >= targetColors.length){
         println("NOW TRACKING THE MAXIMUM NUMBER OF COLORS");
       }
@@ -210,4 +208,24 @@ class Tracker{
     }
   }
 
+  /* 
+   * Remove a color to track ...
+   * Remove the most recent color to track that was added to the list
+   */
+  void removeColor(){
+    if(numColors == 0){
+      println("NO COLORS BEING TRACKED");
+    }
+    else{
+      numColors --;
+      targetColors[numColors][0] = -1.0;
+      targetColors[numColors][1] = -1.0;
+      targetColors[numColors][2] = -1.0;
+      println("MOST RECENTLY ADDED COLOR REMOVED");
+      if(numColors == 0){
+        println("NOW TRACKING NO COLORS");
+      }
+    }
+  }
+      
 }

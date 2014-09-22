@@ -173,12 +173,22 @@ void mousePressed(){
  * When a Tracker has been configured, disable configuration mode
  */
 void keyPressed(){
-  if(xy.confMode == true){
-    xy.confMode = false;
-    println("CONFIGURING SECOND CAMERA");
+  if(key == ' '){
+    if(xy.confMode == true){
+      xy.confMode = false;
+      println("CONFIGURING SECOND CAMERA");
+    }
+    else if(yz.confMode == true){
+      yz.confMode = false;
+      println("CONFIGURATION COMPlETE");
+    }
   }
-  else if(yz.confMode == true){
-    yz.confMode = false;
-    println("CONFIGURATION COMPlETE");
+  else if(key == 'r'){
+    if(xy.confMode == true){
+      xy.removeColor();
+    }
+    else if(yz.confMode == true){
+      yz.removeColor();
+    }
   }
 }
