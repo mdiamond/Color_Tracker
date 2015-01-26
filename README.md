@@ -1,7 +1,7 @@
-Goldfish_Tracker
+Color_Tracker
 ================
 
-Tracks a fish as (x, y, z) coordinates and renders it in a 3D space
+Tracks anything with a distint color as (x, y, z) coordinates and renders it in a 3D space
 
 ##Usage
 
